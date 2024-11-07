@@ -9,12 +9,8 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var players : [Player] = [
-        Player(name: "Elisha", score: 0),
-        Player(name: "Andre", score: 0),
-        Player(name: "Jasmine", score: 0),
-    ]
-    
+    @State private var scoreboard = Scoreboard()
+    @State private var startingPoints = 0
 
 
     var body: some View {
@@ -25,6 +21,8 @@ struct ContentView: View {
                 .bold()
                 .padding(.bottom)
             
+            SettingView(startingpoints: $startingPoints)
+            
             Grid {
                 
                 GridRow{
@@ -34,7 +32,7 @@ struct ContentView: View {
                 }
                 .font(.headline)
                 
-                ForEach($players){ $player in
+                ForEach($scoreboard.players){ $player in
                     GridRow {
                         TextField("Name", text: $player.name)
                         Text("\(player.score)")
@@ -46,31 +44,35 @@ struct ContentView: View {
             }
             .padding(.vertical)
             
-
+            Button("Add Player", systemImage: "plus") {
+                scoreboard.players.append(Player(name: "", score: 0))
+            }
+            .buttonStyle(.borderedProminent)
+            
             Spacer()
+            
+            switch scoreboard.state {
+            case .setup:
+                Button("Start Game", systemImage: "play.circle") {
+                    scoreboard.state = .playing
+                    scoreboard.resetScores(to: startingPoints)
+                }
+            case .playing:
+                Button("End Game", systemImage: "stop.fill") {
+                    scoreboard.state = .gameOver
+                }
+            case .gameOver:
+                Button("Restart Game", systemImage: "arrow.counterclockwise") {
+                    scoreboard.state = .setup
+                }
+            }
         }
         .padding()
         .background(.yellow)
         
-        HStack {
-            Button("Add Player", systemImage: "plus") {
-                players.append(Player(name: "", score: 0))
-            }
-            .buttonStyle(.borderedProminent)
             
-            
-            Button("Remove Player", systemImage: "minus") {
-                guard players.count == 0 else { players.removeLast()
-                    return
-                }
-            }
-            .disabled(players.count == 0)
-        }
-        .buttonStyle(.borderedProminent)
         
     }
-    
-        
 }
 
 
