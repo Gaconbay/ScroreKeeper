@@ -22,6 +22,7 @@ struct ContentView: View {
                 .padding(.bottom)
             
             SettingView(doesHighestScoreWin: $scoreboard.doesHighestScoreWin, startingpoints: $startingPoints)
+                .disabled(scoreboard.state != .setup)
             
             Grid {
                 
@@ -29,6 +30,7 @@ struct ContentView: View {
                     Text("Player")
                         .gridColumnAlignment(.leading)
                     Text("Score")
+                        .opacity(scoreboard.state != .setup ? 0 : 1)
                 }
                 .font(.headline)
                 
@@ -54,30 +56,35 @@ struct ContentView: View {
                 scoreboard.players.append(Player(name: "", score: 0))
             }
             .buttonStyle(.borderedProminent)
+            .opacity(scoreboard.state == .setup ? 1.0 : 0)
             
             Spacer()
             
-            switch scoreboard.state {
-            case .setup:
-                Button("Start Game", systemImage: "play.circle") {
-                    scoreboard.state = .playing
-                    scoreboard.resetScores(to: startingPoints)
+            HStack{
+                Spacer()
+                switch scoreboard.state {
+                case .setup:
+                    Button("Start Game", systemImage: "play.circle") {
+                        scoreboard.state = .playing
+                        scoreboard.resetScores(to: startingPoints)
+                    }
+                case .playing:
+                    Button("End Game", systemImage: "stop.fill") {
+                        scoreboard.state = .gameOver
+                    }
+                case .gameOver:
+                    Button("Restart Game", systemImage: "arrow.counterclockwise") {
+                        scoreboard.state = .setup
+                    }
                 }
-            case .playing:
-                Button("End Game", systemImage: "stop.fill") {
-                    scoreboard.state = .gameOver
-                }
-            case .gameOver:
-                Button("Restart Game", systemImage: "arrow.counterclockwise") {
-                    scoreboard.state = .setup
-                }
+                Spacer()
             }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .tint(.blue)
         }
         .padding()
-        .background(.pink)
-        
-            
-        
     }
 }
 
