@@ -40,19 +40,37 @@ struct ContentView: View {
                         Text("\(player.score)")
                         Stepper("\(player.score)", value: $player.score)
                             .labelsHidden()
+                            .colorScheme(.dark)
                     }
                 }
             }
             .padding(.vertical)
             
-            Button("Add Player", systemImage: "plus") {
-                players.append(Player(name: "", score: 0))
-            }
-            
+
             Spacer()
         }
         .padding()
+        .background(.yellow)
+        
+        HStack {
+            Button("Add Player", systemImage: "plus") {
+                players.append(Player(name: "", score: 0))
+            }
+            .buttonStyle(.borderedProminent)
+            
+            
+            Button("Remove Player", systemImage: "minus") {
+                guard players.count == 0 else { players.removeLast()
+                    return
+                }
+            }
+            .disabled(players.count == 0)
+        }
+        .buttonStyle(.borderedProminent)
+        
     }
+    
+        
 }
 
 
