@@ -85,6 +85,7 @@ struct ContentView: View {
             .tint(.blue)
         }
         .padding()
+        .background(LinearGradient(colors: [.white, .orange], startPoint: .top, endPoint: .bottom))
     }
 }
 
